@@ -30,6 +30,10 @@ public class BookService {
         return bookDAO.getBookByid(id);
     }
 
+    //trouver un livre par titre
+    Book findBookByTitle(String title) {
+        return bookDAO.getBookByTitle(title);
+    }
     // Supprimer un livre par ID
     public void deleteBook(int id) {
         bookDAO.delete(id);
