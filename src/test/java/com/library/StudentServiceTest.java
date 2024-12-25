@@ -16,7 +16,8 @@ class StudentServiceTest {
     void setUp() throws SQLException {
         // Initialize the service layer
         studentService = new StudentService();
-
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
         // Add students
         studentService.addStudent(new Student(1, "Alice"));
         studentService.addStudent(new Student(2, "Bob"));

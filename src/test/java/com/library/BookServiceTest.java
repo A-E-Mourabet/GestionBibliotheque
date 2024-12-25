@@ -26,6 +26,7 @@ class BookServiceTest {
         // Verify that the book was added
         assertEquals(1, bookDAO.getAllBooks().size());
         assertEquals("Java Programming", bookService.findBookById(1).getTitle());
+        bookService.deleteBook(1);
     }
 
     @Test
@@ -41,6 +42,8 @@ class BookServiceTest {
         // Verify the update
         assertEquals("Advanced Java", bookService.findBookById(1).getTitle());
         assertNotEquals(book.getTitle(), bookService.findBookById(1).getTitle());
+        bookService.deleteBook(1);
+
     }
 
     @Test

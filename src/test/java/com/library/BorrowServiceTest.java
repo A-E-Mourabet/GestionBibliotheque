@@ -29,6 +29,10 @@ class BorrowServiceTest {
         studentService = new StudentService();
         borrowService = new BorrowService();
 
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
+        bookService.deleteBook(1);
+        bookService.deleteBook(2);
         // Add students
         studentService.addStudent(new Student(1, "Alice"));
         studentService.addStudent(new Student(2, "Bob"));
