@@ -25,8 +25,8 @@ class BookServiceTest {
 
         // Verify that the book was added
         assertEquals(1, bookDAO.getAllBooks().size());
-        assertEquals("Java Programming", bookService.findBookById(1).getTitle());
-        bookService.deleteBook(1);
+        assertEquals("Java Programming", bookService.findBookByTitle("Java Programming").getTitle());
+        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
     }
 
     @Test
@@ -35,14 +35,13 @@ class BookServiceTest {
         bookService.addBook(book);
 
         // Update the book
-        Book bookToUpdate = bookService.findBookById(1);
+        Book bookToUpdate = bookService.findBookById(bookService.findBookByTitle("Java Programming").getId());
         bookToUpdate.setTitle("Advanced Java");
         bookService.updateBook(bookToUpdate);
 
         // Verify the update
-        assertEquals("Advanced Java", bookService.findBookById(1).getTitle());
-        assertNotEquals(book.getTitle(), bookService.findBookById(1).getTitle());
-        bookService.deleteBook(1);
+        assertNotNull(bookService.findBookByTitle("Advanced Java"));
+        bookService.deleteBook(bookService.findBookByTitle("Advanced Java").getId());
 
     }
 
@@ -52,9 +51,9 @@ class BookServiceTest {
         bookService.addBook(book);
 
         // Delete the book
-        bookService.deleteBook(1);
+        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
 
         // Verify that the book is deleted (it should return null or throw an exception)
-        assertNull(bookService.findBookById(1));
+        assertNull(bookService.findBookByTitle("Java Programming"));
     }
 }

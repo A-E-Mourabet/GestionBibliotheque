@@ -12,6 +12,13 @@ public class Borrow {
     // Constructor
     public Borrow(){}
 
+    public Borrow(int id, Student student, Book book, Date borrowDate) {
+        this.id = id;
+        this.student = student;
+        this.book = book;
+        this.borrowDate = borrowDate;
+    }
+
     // Full constructor
     public Borrow(int id, Student student, Book book, Date borrowDate, Date returnDate) {
         this.id = id;

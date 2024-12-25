@@ -90,4 +90,15 @@ public class BorrowDAO {
             e.printStackTrace();
         }
     }
+
+    public void deleteBorrow(int borrowId) {
+        String query = "DELETE FROM borrows WHERE id = ?";
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, borrowId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

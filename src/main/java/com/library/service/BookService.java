@@ -31,7 +31,7 @@ public class BookService {
     }
 
     //trouver un livre par titre
-    Book findBookByTitle(String title) {
+    public Book findBookByTitle(String title) {
         return bookDAO.getBookByTitle(title);
     }
     // Supprimer un livre par ID

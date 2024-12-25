@@ -29,10 +29,7 @@ class BorrowServiceTest {
         studentService = new StudentService();
         borrowService = new BorrowService();
 
-        studentService.deleteStudent(1);
-        studentService.deleteStudent(2);
-        bookService.deleteBook(1);
-        bookService.deleteBook(2);
+
         // Add students
         studentService.addStudent(new Student(1, "Alice"));
         studentService.addStudent(new Student(2, "Bob"));
@@ -42,8 +39,9 @@ class BorrowServiceTest {
         bookService.addBook(new Book("Advanced Java", "John Doe", "ENSA-MA", 2023));
 
         // Fetch the book and student for testing
-        book = bookService.findBookById(1);
+        book = bookService.findBookByTitle("Java Programming");
         student = studentService.findStudentById(1);
+
     }
 
     @Test
@@ -54,21 +52,33 @@ class BorrowServiceTest {
         borrowService.borrowBook(borrow);
 
         // Verify the book's availability after borrowing
-        assertNull(bookService.findBookById(1), "The book should not be available after borrowing.");
+        assertNull(bookService.findBookById(borrow.getBook().getId()), "The book should not be available after borrowing.");
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
+        bookService.deleteBook(bookService.findBookByTitle("Advanced Java").getId());
+        borrowService.deleteBorrow(borrow);
+
+
     }
 
     @Test
     void testReturnBook() throws SQLException {
         // Alice borrows the book
         LocalDate borrowDate = LocalDate.of(2024, 11, 12);  // Set borrow date (12/11/2024)
-        Borrow borrow = new Borrow(1,student, book, java.sql.Date.valueOf(borrowDate), java.sql.Date.valueOf(borrowDate));
+        Borrow borrow = new Borrow(1,student, book, java.sql.Date.valueOf(borrowDate));
         borrowService.borrowBook(borrow);
 
         // Return the book
         borrowService.returnBook(borrow);
 
         // Verify the book's availability after returning
-        assertNull(bookService.findBookById(1), "The book should be available after returning.");
+        assertNull(bookService.findBookById(borrow.getBook().getId()), "The book should be available after returning.");
+
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
+        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
+        bookService.deleteBook(bookService.findBookByTitle("Advanced Java").getId());
+        borrowService.deleteBorrow(borrow);
     }
 
 
@@ -77,8 +87,13 @@ class BorrowServiceTest {
         // Try borrowing with a non-existent student (ID 3)
         Student student3 = studentService.findStudentById(3); // Should return null or throw exception
         Book book = bookService.findBookById(1);
-
+        LocalDate borrowDate = LocalDate.of(2024, 11, 12);  // Set borrow date (12/11/2024)
         assertNull(student3, "The student should not be found.");
-        //assertThrows(NullPointerException.class, () -> borrowService.borrowBook(new Borrow(student3, book)));
+        assertThrows(NullPointerException.class, () -> borrowService.borrowBook(new Borrow(1,student3, book,java.sql.Date.valueOf(borrowDate))));
+
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
+        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
+        bookService.deleteBook(bookService.findBookByTitle("Advanced Java").getId());
     }
 }

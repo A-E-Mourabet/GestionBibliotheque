@@ -16,8 +16,6 @@ class StudentServiceTest {
     void setUp() throws SQLException {
         // Initialize the service layer
         studentService = new StudentService();
-        studentService.deleteStudent(1);
-        studentService.deleteStudent(2);
         // Add students
         studentService.addStudent(new Student(1, "Alice"));
         studentService.addStudent(new Student(2, "Bob"));
@@ -28,6 +26,8 @@ class StudentServiceTest {
         // Test if the student is added correctly
         assertEquals(2, studentService.getAllStudents().size()); // 2 students should be added
         assertEquals("Alice", studentService.findStudentById(1).getName()); // Verify Alice's name
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
     }
 
     @Test
@@ -37,6 +37,8 @@ class StudentServiceTest {
 
         // Verify the update
         assertEquals("Alice Smith", studentService.findStudentById(1).getName()); // Alice's name should be updated
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
     }
 
     @Test
@@ -46,6 +48,7 @@ class StudentServiceTest {
 
         // Verify that Alice is deleted
         assertNull(studentService.findStudentById(1)); // Should return empty since Alice is deleted
+        studentService.deleteStudent(2);
     }
 
     @Test
@@ -55,5 +58,9 @@ class StudentServiceTest {
 
         // Verify the number of students
         assertEquals(3, studentService.getAllStudents().size()); // 3 students should now exist
+        studentService.deleteStudent(1);
+        studentService.deleteStudent(2);
+        studentService.deleteStudent(3);
+
     }
 }

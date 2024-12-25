@@ -13,7 +13,9 @@ import java.util.List;
 
 public class BorrowService {
 
-    private BorrowDAO borrowDAO;
+    public BorrowDAO borrowDAO = new BorrowDAO();
+    public BookDAO bookDAO= new BookDAO();
+
 
     // Constructeur avec BorrowDAO
     public BorrowService() {
@@ -23,13 +25,16 @@ public class BorrowService {
     public void borrowBook(Borrow borrow) {
         // Sauvegarde de l'emprunt dans la base de données
         borrowDAO.save(borrow);
+        bookDAO.delete(borrow.getBook().getId());
     }
 
     // Method to return a book
     public void returnBook(Borrow borrow) throws SQLException {
         // Update the borrow record (optional, based on how you handle the return date)
-        borrow.setReturnDate(java.sql.Date.valueOf(java.time.LocalDate.now())); // Set the current date as return date
+        borrow.setReturnDate(java.sql.Date.valueOf(java.time.LocalDate.now()));// Set the current date as return date
+        borrowDAO.deleteBorrow(borrow.getId());
         borrowDAO.save(borrow); // Update the borrow record in the database
+        bookDAO.add(borrow.getBook());
     }
 
     // Afficher les emprunts (méthode fictive, à adapter)
@@ -44,6 +49,10 @@ public class BorrowService {
                     ", Date d'emprunt: " + borrow.getBorrowDate() +
                     ", Date de retour: " + borrow.getReturnDate());
         }
+    }
+
+    public void deleteBorrow(Borrow borrow){
+        borrowDAO.deleteBorrow(borrow.getId());
     }
 
 }
