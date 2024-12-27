@@ -14,7 +14,9 @@ import java.util.List;
 public class BorrowService {
 
     public BorrowDAO borrowDAO = new BorrowDAO();
-    public BookDAO bookDAO= new BookDAO();
+    public BookService bookService= new BookService();
+    public StudentService studentService= new StudentService();
+
 
 
     // Constructeur avec BorrowDAO
@@ -23,10 +25,31 @@ public class BorrowService {
 
     // Méthode pour emprunter un livre
     public void borrowBook(Borrow borrow) {
-        // Sauvegarde de l'emprunt dans la base de données
+        if (borrow.getStudent() == null) {
+            throw new IllegalArgumentException("Student cannot be null");
+        }
+
+        if (borrow.getBook() == null) {
+            throw new IllegalArgumentException("Book cannot be null");
+        }
+
+        // Check if the book exists
+        Book book = bookService.findBookById(borrow.getBook().getId());
+        if (book == null) {
+            throw new IllegalArgumentException("Book not found in the database.");
+        }
+
+        // Check if the student exists
+        Student student = studentService.findStudentById(borrow.getStudent().getId());
+        if (student == null) {
+            throw new IllegalArgumentException("Student not found in the database.");
+        }
+
+        // Save the borrow record and delete the book from the database
         borrowDAO.save(borrow);
-        bookDAO.delete(borrow.getBook().getId());
+        bookService.deleteBook(book.getId());
     }
+
 
     // Method to return a book
     public void returnBook(Borrow borrow) throws SQLException {
@@ -34,7 +57,7 @@ public class BorrowService {
         borrow.setReturnDate(java.sql.Date.valueOf(java.time.LocalDate.now()));// Set the current date as return date
         borrowDAO.deleteBorrow(borrow.getId());
         borrowDAO.save(borrow); // Update the borrow record in the database
-        bookDAO.add(borrow.getBook());
+        bookService.addBook(borrow.getBook());
     }
 
     // Afficher les emprunts (méthode fictive, à adapter)

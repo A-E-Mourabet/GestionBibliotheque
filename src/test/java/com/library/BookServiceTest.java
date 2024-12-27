@@ -5,55 +5,77 @@ import com.library.model.Book;
 import com.library.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class BookServiceTest {
-    private BookService bookService;
-    private BookDAO bookDAO;
+
+    @Mock
+    private BookDAO bookDAO; // Mock the DAO
+
+    @InjectMocks
+    private BookService bookService; // Inject the mock DAO into the service
 
     @BeforeEach
     void setUp() {
-        bookDAO = new BookDAO(); // This will be replaced with a mock in real tests
-        bookService = new BookService(); // Inject the DAO into the service
+        MockitoAnnotations.openMocks(this); // Initialize mocks
     }
 
     @Test
     void testAddBook() {
         Book book = new Book("Java Programming", "John Doe", "ENSA-MA", 2023);
+
+        // Mock the DAO behavior
+        doNothing().when(bookDAO).add(book);
+        when(bookDAO.getAllBooks()).thenReturn(List.of(book));
+        when(bookDAO.getBookByTitle("Java Programming")).thenReturn(book);
+
+        // Test the service method
         bookService.addBook(book);
 
-        // Verify that the book was added
+        // Verify interactions with the DAO
+        verify(bookDAO, times(1)).add(book);
         assertEquals(1, bookDAO.getAllBooks().size());
         assertEquals("Java Programming", bookService.findBookByTitle("Java Programming").getTitle());
-        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
     }
 
     @Test
     void testUpdateBook() {
         Book book = new Book("Java Programming", "John Doe", "ENSA-MA", 2023);
-        bookService.addBook(book);
 
-        // Update the book
-        Book bookToUpdate = bookService.findBookById(bookService.findBookByTitle("Java Programming").getId());
-        bookToUpdate.setTitle("Advanced Java");
-        bookService.updateBook(bookToUpdate);
+        // Mock the DAO behavior
+        when(bookDAO.getBookByid(book.getId())).thenReturn(book);
+        doNothing().when(bookDAO).update(book);
 
-        // Verify the update
-        assertNotNull(bookService.findBookByTitle("Advanced Java"));
-        bookService.deleteBook(bookService.findBookByTitle("Advanced Java").getId());
+        // Test the service method
+        book.setTitle("Advanced Java");
+        bookService.updateBook(book);
 
+        // Verify interactions with the DAO
+        verify(bookDAO, times(1)).update(book);
+        assertEquals("Advanced Java", book.getTitle());
     }
 
     @Test
     void testDeleteBook() {
         Book book = new Book("Java Programming", "John Doe", "ENSA-MA", 2023);
-        bookService.addBook(book);
 
-        // Delete the book
-        bookService.deleteBook(bookService.findBookByTitle("Java Programming").getId());
+        // Mock the DAO behavior
+        when(bookDAO.getBookByTitle("Java Programming")).thenReturn(book);
+        doNothing().when(bookDAO).delete(book.getId());
 
-        // Verify that the book is deleted (it should return null or throw an exception)
+        // Test the service method
+        bookService.deleteBook(book.getId());
+
+        // Verify interactions with the DAO
+        verify(bookDAO, times(1)).delete(book.getId());
+        when(bookDAO.getBookByTitle("Java Programming")).thenReturn(null);
         assertNull(bookService.findBookByTitle("Java Programming"));
     }
 }
